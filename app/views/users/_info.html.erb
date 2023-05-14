@@ -18,10 +18,12 @@
   </tr>
 </table>
 　
-<div class='row'>
+<div class='row d-flex justify-content-center mb-3'>
   <% if current_user != user %>
     <%= render "relationships/btn", user: user %>
   <% end %>
+</div>
+<div class='row'>
   <%= link_to edit_user_path(user), class: "btn btn-outline-secondary btn-block edit_user_#{user.id}" do %>
     <i class="fas fa-user-cog"></i>
   <% end %>
