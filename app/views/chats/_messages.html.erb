@@ -1,0 +1,10 @@
+<% chats.each do |chat| %>
+  <div class="row d-flex justify-content-center">
+  <% if chat.user_id == current_user.id %>
+    <%= chat.message %>
+  <% else %>
+    <%= chat.user.name %>
+    <%= chat.message %>
+  <% end %>
+  </div>
+<% end %>
