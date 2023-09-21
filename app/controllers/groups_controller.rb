@@ -50,10 +50,38 @@ class GroupsController < ApplicationController
     redirect_to groups_path
   end
 
+  def new_mail
+    @notice = Notice.new
+    @group = Group.find(params[:group_id])
+  end
+
+  def send_mail
+    @notice = Notice.new(notice_params)
+    @group = Group.find(params[:group_id])
+    @notice.group_id = @group.id
+    if @notice.save
+      @group.users.each do |group_user|
+        user = User.find(group_user.id)
+        ContactMailer.send_when_owner_announce(user, @group, @notice).deliver
+      end
+      redirect_to group_mail_notice_path(@group.id, @notice.id)
+    else
+      render :new
+    end
+  end
+
+  def send_mail_notice
+    @notice = Notice.find(params[:id])
+  end
+
   private
 
   def group_params
     params.require(:group).permit(:name, :introduction, :image)
+  end
+
+  def notice_params
+    params.require(:notice).permit(:title,:body)
   end
 
   def ensure_correct_user
