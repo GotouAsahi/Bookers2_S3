@@ -6,6 +6,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @books = @user.books
     @book = Book.new
+    @today_books = @books.created_today
+    @yesterday_books = @books.created_yesterday
+    @this_week_books = @books.created_this_week
+    @last_week_books = @books.created_last_week
   end
 
   def index
@@ -13,14 +17,24 @@ class UsersController < ApplicationController
     @book = Book.new
   end
 
-  def edit; end
-
   def update
     if @user.update(user_params)
       redirect_to user_path(@user), notice: 'You have updated user successfully.'
     else
       render 'edit'
     end
+  end
+
+  def search
+    @user = User.find(params[:user_id])
+    @books = @user.books
+    @book = Book.new
+    @today_books = @books.created_today
+    @yesterday_books = @books.created_yesterday
+    @this_week_books = @books.created_this_week
+    @last_week_books = @books.created_last_week
+    create_at = params[:created_at]
+    @search_book = @books.where(['created_at LIKE ? ', "#{create_at}%"]).count
   end
 
   private
