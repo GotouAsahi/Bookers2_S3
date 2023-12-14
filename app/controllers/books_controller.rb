@@ -8,8 +8,14 @@ class BooksController < ApplicationController
   end
 
   def index
-    @books = Book.all
     @book = Book.new
+    if params[:sort] == 'newer'
+      @books = Book.order(created_at: 'DESC')
+    elsif params[:sort] == 'higher'
+      @books = Book.order(star: 'DESC')
+    else
+      @books = Book.all
+    end
   end
 
   def create
@@ -39,10 +45,20 @@ class BooksController < ApplicationController
     redirect_to books_path
   end
 
+  def search
+    @tag = params[:tag]
+    if @tag.present?
+      @books = Book.where("tag LIKE?","%#{@tag}%")
+    else
+      @books = Book.all
+    end
+    render :search_result
+  end
+
   private
 
   def book_params
-    params.require(:book).permit(:title, :body)
+    params.require(:book).permit(:title, :body, :tag, :star)
   end
 
   def ensure_correct_user
